@@ -49,24 +49,3 @@ extern "C" void makeBinaryUnoCall(
     (*interface->pDispatcher)(interface, td, result, arguments, exception);
     typelib_typedescription_release(td);
 }
-
-int main() {
-    rtl::OUString in("test: $UNO_TYPES :test");
-    rtl::OUString out;
-    uno_Interface * expanderIfc = setUp();
-
-    rtl_uString * result = 0;
-    void * args[1];
-    args[0] = const_cast<rtl_uString **>(&in.pData);
-    uno_Any * exception = 0;
-    makeBinaryUnoCall(
-        expanderIfc, "com.sun.star.util.XMacroExpander::expandMacros", &result,
-        args, &exception);
-    if (exception != 0) {
-        assert(false); //TODO: handle exceptions
-    }
-    assert(result != 0);
-
-    out = rtl::OUString(result, SAL_NO_ACQUIRE);
-    std::cout << out.toUtf8().getStr() << '\n';
-}

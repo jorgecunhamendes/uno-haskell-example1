@@ -3,26 +3,63 @@
 
 .DELETE_ON_ERROR:
 
-.PHONY: test
-test: out/expand
-	LD_LIBRARY_PATH=$(LO_INSTDIR)/program out/expand
+LDPATH=LD_LIBRARY_PATH=$(LO_INSTDIR)/program
 
-.PHONY: clean
+HSFILES= Main.hs Text.hs
+
+OBJECTS= out/Text.cpp_o out/expand.cpp_o
+
+.PHONY : compile run debug repl clean cleanall
+
+# compile the program
+compile : Main
+
+# run the program
+run :
+	$(LDPATH) ./Main
+
+# start gdb
+debug :
+	$(LDPATH) gdb ./Main
+
+# run an Haskell interpreter
+repl :
+	$(LDPATH) ghci Main.hs $(OBJECTS)
+
+# remove intermediate files
 clean:
-	rm -r out
+	-rm -r out
 
-out/expand: expand.cc out/cpputypes.cppumaker.flag | out
-	LD_LIBRARY_PATH=$(LO_INSTDIR)/program g++ -g -o $@ expand.cc \
-         -DCPPU_ENV=gcc3 -DHAVE_GCC_VISIBILITY_FEATURE -DLINUX -DUNX \
-         -I $(LO_INSTDIR)/sdk/include -I out/include/cpputypes \
-         -L$(LO_INSTDIR)/sdk/lib -luno_cppu -luno_cppuhelpergcc3 -luno_sal
+# remove all generated files
+cleanall : clean
+	-rm Main
 
+# program target
+Main : $(HSFILES) $(OBJECTS) | out
+	$(LDPATH) ghc -W -Wall -debug -o $@ $^ \
+    -odir out -hidir out \
+    -no-user-package-db -package-db `find .cabal-sandbox -name '*.conf.d'` \
+    -L"$(LO_INSTDIR)/sdk/lib" \
+    -lstdc++ -luno_cppu -luno_cppuhelpergcc3 -luno_sal
+
+# C++ file compilation
+out/%.cpp_o : %.cc | out
+	g++ -c -g -o $@ $< \
+    -DCPPU_ENV=gcc3 -DHAVE_GCC_VISIBILITY_FEATURE -DLINUX -DUNX \
+    -I"$(LO_INSTDIR)/sdk/include" -I out/include/cpputypes
+
+# C++ file dependencies
+out/Text.cpp_o : Text.cc Text.h
+out/expand.cpp_o : expand.cc out/cpputypes.cppumaker.flag
+
+# UNO SDK types
 out/cpputypes.cppumaker.flag: | out
-	LD_LIBRARY_PATH=$(LO_INSTDIR)/program $(LO_INSTDIR)/sdk/bin/cppumaker \
+	$(LDPATH) $(LO_INSTDIR)/sdk/bin/cppumaker \
             -O./out/include/cpputypes \
             '-Tcom.sun.star.beans.Introspection;com.sun.star.beans.theIntrospection;com.sun.star.bridge.BridgeFactory;com.sun.star.bridge.UnoUrlResolver;com.sun.star.connection.Acceptor;com.sun.star.connection.Connector;com.sun.star.io.Pipe;com.sun.star.io.TextInputStream;com.sun.star.io.TextOutputStream;com.sun.star.java.JavaVirtualMachine;com.sun.star.lang.DisposedException;com.sun.star.lang.EventObject;com.sun.star.lang.XMain;com.sun.star.lang.XMultiComponentFactory;com.sun.star.lang.XMultiServiceFactory;com.sun.star.lang.XSingleComponentFactory;com.sun.star.lang.XSingleServiceFactory;com.sun.star.lang.XTypeProvider;com.sun.star.loader.Java;com.sun.star.loader.SharedLibrary;com.sun.star.reflection.ProxyFactory;com.sun.star.registry.ImplementationRegistration;com.sun.star.registry.SimpleRegistry;com.sun.star.registry.XRegistryKey;com.sun.star.script.Converter;com.sun.star.script.Invocation;com.sun.star.security.AccessController;com.sun.star.security.Policy;com.sun.star.uno.DeploymentException;com.sun.star.uno.Exception;com.sun.star.uno.NamingService;com.sun.star.uno.RuntimeException;com.sun.star.uno.XAggregation;com.sun.star.uno.XComponentContext;com.sun.star.uno.XCurrentContext;com.sun.star.uno.XInterface;com.sun.star.uno.XWeak;com.sun.star.uri.ExternalUriReferenceTranslator;com.sun.star.uri.UriReferenceFactory;com.sun.star.uri.VndSunStarPkgUrlReferenceFactory;com.sun.star.util.theMacroExpander' \
             $(LO_INSTDIR)/program/types.rdb
 	touch $@
 
+# intermediary files output directory
 out:
 	mkdir $@
