@@ -5,9 +5,17 @@
 
 LDPATH=LD_LIBRARY_PATH=$(LO_INSTDIR)/program
 
-HSFILES= Main.hs Text.hs
+HSFILES= Main.hs Text.hs \
+				 SAL/Types.hs \
+				 UNO/Binary.hs \
+				 UNO/Service.hs \
+				 LibreOffice/Util/TheMacroExpander.hs \
+				 LibreOffice/Util/XMacroExpander.hs
 
-OBJECTS= out/Text.cpp_o out/expand.cpp_o
+OBJECTS= out/Text.cpp_o \
+				 out/UNO/Binary.cpp_o \
+				 out/LibreOffice/Util/XMacroExpander.cpp_o \
+				 out/LibreOffice/Util/TheMacroExpander.cpp_o
 
 .PHONY : compile run debug repl clean cleanall
 
@@ -43,14 +51,16 @@ Main : $(HSFILES) $(OBJECTS) | out
     -lstdc++ -luno_cppu -luno_cppuhelpergcc3 -luno_sal
 
 # C++ file compilation
-out/%.cpp_o : %.cc | out
+out/%.cpp_o : %.cc out/cpputypes.cppumaker.flag | out
 	g++ -c -g -o $@ $< \
     -DCPPU_ENV=gcc3 -DHAVE_GCC_VISIBILITY_FEATURE -DLINUX -DUNX \
     -I"$(LO_INSTDIR)/sdk/include" -I out/include/cpputypes
 
 # C++ file dependencies
+out/UNO/Binary.cpp_o : UNO/Binary.cc UNO/Binary.hxx
 out/Text.cpp_o : Text.cc Text.h
-out/expand.cpp_o : expand.cc out/cpputypes.cppumaker.flag
+out/LibreOffice/Util/XMacroExpander.cpp_o : LibreOffice/Util/XMacroExpander.cc LibreOffice/Util/XMacroExpander.h UNO/Binary.hxx
+out/LibreOffice/Util/TheMacroExpander.cpp_o : LibreOffice/Util/TheMacroExpander.cc LibreOffice/Util/TheMacroExpander.h LibreOffice/Util/XMacroExpander.h
 
 # UNO SDK types
 out/cpputypes.cppumaker.flag: | out
@@ -63,3 +73,6 @@ out/cpputypes.cppumaker.flag: | out
 # intermediary files output directory
 out:
 	mkdir $@
+	mkdir -p out/UNO
+	mkdir -p out/SAL
+	mkdir -p out/LibreOffice/Util
