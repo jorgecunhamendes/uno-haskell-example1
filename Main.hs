@@ -7,9 +7,6 @@ import UNO.Binary
 
 import Data.Text (Text, unpack)
 
-data UnoInterface
-data Any
-
 inText :: Text
 inText = "test: $UNO_TYPES :test"
 
