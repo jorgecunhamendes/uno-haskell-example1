@@ -6,6 +6,11 @@
 #include "uno/any2.h"
 #include "uno/mapping.hxx"
 
+#include "com/sun/star/uno/Exception.hpp"
+#include <string>
+
+using ::com::sun::star::uno::Exception;
+
 extern css::uno::Reference<css::uno::XComponentContext> g_context;
 extern css::uno::Reference<css::util::XMacroExpander> g_expander;
 extern css::uno::Mapping g_cpp2uno;

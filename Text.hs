@@ -19,6 +19,9 @@ hs_oustring_to_text oustrPtr = do
   len <- c_oustring_length oustrPtr
   T.fromPtr buf (fromIntegral len)
 
+peekOUString :: Ptr OUString -> IO Text
+peekOUString = hs_oustring_to_text
+
 oustringToUString :: Ptr OUString -> IO (Ptr UString)
 oustringToUString = c_oustringGetUString
 

@@ -9,11 +9,17 @@ HSFILES= Main.hs Text.hs \
 				 SAL/Types.hs \
 				 UNO/Binary.hs \
 				 UNO/Service.hs \
+				 LibreOffice/UNO/Exception.hs \
+				 LibreOffice/UNO/RuntimeException.hs \
+				 LibreOffice/Lang/IllegalArgumentException.hs \
 				 LibreOffice/Util/TheMacroExpander.hs \
 				 LibreOffice/Util/XMacroExpander.hs
 
 OBJECTS= out/Text.cpp_o \
 				 out/UNO/Binary.cpp_o \
+				 out/LibreOffice/UNO/Exception.cpp_o \
+				 out/LibreOffice/UNO/RuntimeException.cpp_o \
+				 out/LibreOffice/Lang/IllegalArgumentException.cpp_o \
 				 out/LibreOffice/Util/XMacroExpander.cpp_o \
 				 out/LibreOffice/Util/TheMacroExpander.cpp_o
 
@@ -59,6 +65,9 @@ out/%.cpp_o : %.cc out/cpputypes.cppumaker.flag | out
 # C++ file dependencies
 out/UNO/Binary.cpp_o : UNO/Binary.cc UNO/Binary.hxx
 out/Text.cpp_o : Text.cc Text.h
+out/LibreOffice/UNO/Exception.cpp_o : LibreOffice/UNO/Exception.cc LibreOffice/UNO/Exception.h
+out/LibreOffice/UNO/RuntimeException.cpp_o : LibreOffice/UNO/RuntimeException.cc LibreOffice/UNO/RuntimeException.h LibreOffice/UNO/Exception.h
+out/LibreOffice/Lang/IllegalArgumentException.cpp_o : LibreOffice/Lang/IllegalArgumentException.cc LibreOffice/Lang/IllegalArgumentException.h LibreOffice/UNO/RuntimeException.h
 out/LibreOffice/Util/XMacroExpander.cpp_o : LibreOffice/Util/XMacroExpander.cc LibreOffice/Util/XMacroExpander.h UNO/Binary.hxx
 out/LibreOffice/Util/TheMacroExpander.cpp_o : LibreOffice/Util/TheMacroExpander.cc LibreOffice/Util/TheMacroExpander.h LibreOffice/Util/XMacroExpander.h
 
@@ -76,3 +85,5 @@ out:
 	mkdir -p out/UNO
 	mkdir -p out/SAL
 	mkdir -p out/LibreOffice/Util
+	mkdir -p out/LibreOffice/Lang
+	mkdir -p out/LibreOffice/UNO
