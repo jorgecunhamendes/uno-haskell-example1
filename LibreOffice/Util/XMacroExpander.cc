@@ -1,6 +1,6 @@
 #include "XMacroExpander.h"
 
-#include "cppu/unotype.hxx"
+#include "rtl/ref.hxx"
 
 #include "../../UNO/Binary.hxx"
 
@@ -9,8 +9,8 @@ rtl::OUString * expandMacros(void * rIface , uno_Any ** exception,
     rtl::OUString * exp )
 {
     // prepare interface
-    css::uno::Reference< css::util::XMacroExpander > * rIface2 =
-      static_cast< css::uno::Reference< css::util::XMacroExpander > * >(rIface);
+    rtl::Reference< css::util::XMacroExpander > * rIface2 =
+      static_cast< rtl::Reference< css::util::XMacroExpander > * >(rIface);
     uno_Interface * iface = static_cast<uno_Interface *>(
         g_cpp2uno.mapInterface(
             rIface2->get(),
