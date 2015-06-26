@@ -14,7 +14,6 @@ using ::com::sun::star::uno::RuntimeException;
 using ::com::sun::star::lang::IllegalArgumentException;
 
 css::uno::Reference<css::uno::XComponentContext> g_context;
-css::uno::Reference<css::util::XMacroExpander> g_expander;
 css::uno::Mapping g_cpp2uno;
 
 int stringSizeOf = sizeof(std::string);
@@ -25,6 +24,9 @@ extern "C"
 void bootstrap()
 {
     g_context = cppu::defaultBootstrap_InitialComponentContext();
+    g_cpp2uno = css::uno::Mapping(
+                css::uno::Environment::getCurrent(),
+                css::uno::Environment(UNO_LB_UNO));
 }
 
 extern "C"

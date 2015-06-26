@@ -6,6 +6,7 @@
 #include "uno/mapping.hxx"
 
 extern "C"
-rtl::OUString * expandMacros( uno_Interface * iface, uno_Any ** exception, rtl::OUString * exp );
+rtl::OUString * expandMacros( void * rIface, uno_Any ** exception,
+    rtl::OUString * exp );
 
 #endif // LIBREOFFICE_UTIL_XMACROEXPANDER_H

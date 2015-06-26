@@ -12,12 +12,12 @@
 using ::com::sun::star::uno::Exception;
 
 extern css::uno::Reference<css::uno::XComponentContext> g_context;
-extern css::uno::Reference<css::util::XMacroExpander> g_expander;
 extern css::uno::Mapping g_cpp2uno;
 
 extern "C"
 void makeBinaryUnoCall(
     uno_Interface * interface, char const * methodType, void * result,
     void ** arguments, uno_Any ** exception);
+
 
 #endif // UNO_BINARY_H

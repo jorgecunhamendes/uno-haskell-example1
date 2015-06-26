@@ -4,6 +4,6 @@
 #include "uno/mapping.hxx"
 
 extern "C"
-uno_Interface * theMacroExpander_new ();
+void * theMacroExpander_new ();
 
 #endif // LIBREOFFICE_UTIL_THEMACROEXPANDER_H
